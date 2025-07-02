@@ -23,10 +23,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Xcode
+      - name: Set up Xcode 16.2
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15'
+          xcode-version: '16.2'
 
       # Uncomment if you use CocoaPods
       # - name: Install CocoaPods dependencies
