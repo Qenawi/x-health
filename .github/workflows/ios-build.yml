@@ -49,4 +49,8 @@ jobs:
       # Run unit tests
       - name: Run tests
         run: |
-          xcodebuild test -project x-health.xcodeproj -scheme x-health -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2'
+          # Use the Swift Package scheme which includes the test target
+          xcodebuild test \
+            -scheme x-health-Package \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2'
