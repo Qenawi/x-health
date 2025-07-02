@@ -26,6 +26,5 @@ x-health is an iOS application for managing and tracking health records, body pa
   `xcodebuild test -scheme x-health-Package` on macOS.
 - TestFlight workflow: `.github/workflows/testflight.yml`
 - App Store release workflow: `.github/workflows/release.yml`
-
 ## License
 MIT License
