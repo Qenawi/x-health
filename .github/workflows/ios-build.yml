@@ -1,0 +1,50 @@
+# GitHub Actions CI workflow for building an iOS app
+# This workflow checks out the code, sets up Xcode, and builds the app on every push and pull request.
+#
+# Documentation:
+# - Runs on macOS latest runner (includes Xcode)
+# - Uses Xcode 15 (update if needed)
+# - Installs dependencies (if using SPM, CocoaPods, or Carthage)
+# - Builds the app using xcodebuild
+# - Fails if the build fails
+
+name: iOS Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15'
+
+      # Uncomment if you use CocoaPods
+      # - name: Install CocoaPods dependencies
+      #   run: pod install
+
+      # Uncomment if you use Carthage
+      # - name: Install Carthage dependencies
+      #   run: carthage bootstrap --platform iOS
+
+      # Uncomment if you use Swift Package Manager (SPM)
+      # - name: Resolve SPM dependencies
+      #   run: xcodebuild -resolvePackageDependencies -project x-health.xcodeproj
+
+      - name: Build app
+        run: |
+          xcodebuild -project x-health.xcodeproj -scheme x-health -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.0' build
+
+      # Optionally, add test steps if you have unit/UI tests
+      # - name: Run tests
+      #   run: |
+      #     xcodebuild test -project x-health.xcodeproj -scheme x-health -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.0'

@@ -7,17 +7,26 @@
 
 import SwiftUI
 
+
+// ContentView.swift
+import SwiftUI
+
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            HomeView()
+                .navigationBarHidden(true)
         }
-        .padding()
+        .preferredColorScheme(.dark)
     }
 }
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
 
 #Preview {
     ContentView()

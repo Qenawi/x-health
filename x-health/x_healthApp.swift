@@ -7,11 +7,14 @@
 
 import SwiftUI
 
+
+
 @main
-struct x_healthApp: App {
+struct x_healthAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [MedicalRecord.self, Doctor.self, Tag.self])
     }
 }
