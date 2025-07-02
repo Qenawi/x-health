@@ -25,6 +25,5 @@ x-health is an iOS application for managing and tracking health records, body pa
 - Basic unit tests are located in `x-healthTests/`. Run them with `xcodebuild test`.
 - TestFlight workflow: `.github/workflows/testflight.yml`
 - App Store release workflow: `.github/workflows/release.yml`
-
 ## License
 MIT License
