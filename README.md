@@ -22,6 +22,10 @@ x-health is an iOS application for managing and tracking health records, body pa
 - Main code is in `Views/` and root Swift files
 - Assets are in `Assets.xcassets`
 - CI/CD is set up with GitHub Actions (`.github/workflows/ios-build.yml`)
+- Basic unit tests are located in `x-healthTests/`. Run them with
+  `xcodebuild test -scheme x-health-Package` on macOS.
+- TestFlight workflow: `.github/workflows/testflight.yml`
+- App Store release workflow: `.github/workflows/release.yml`
 
 ## License
 MIT License
