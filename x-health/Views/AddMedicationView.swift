@@ -5,6 +5,8 @@ struct AddMedicationView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    var medication: Medication? = nil
+
     @State private var name: String = ""
     @State private var dosage: String = ""
     /// Temporary dose entries for the form. These are converted to `MedicationDose`
@@ -25,6 +27,21 @@ struct AddMedicationView: View {
     @State private var refillThreshold: Int = 0
     @State private var showError = false
     @State private var errorMessage = ""
+    @State private var showSuccess = false
+
+    init(medication: Medication? = nil) {
+        self.medication = medication
+        _name = State(initialValue: medication?.name ?? "")
+        _dosage = State(initialValue: medication?.dosage ?? "")
+        if let med = medication {
+            let entries = med.doses.map { DoseEntry(time: $0.time, strength: $0.strength, quantity: $0.quantity, notes: $0.notes) }
+            _doses = State(initialValue: entries)
+            _startDate = State(initialValue: med.startDate)
+            _endDate = State(initialValue: med.endDate)
+            _supplyCount = State(initialValue: med.supplyCount)
+            _refillThreshold = State(initialValue: med.refillThreshold)
+        }
+    }
 
     var body: some View {
         Form {
@@ -62,28 +79,45 @@ struct AddMedicationView: View {
             Button("Save Medicine") {
                 do {
                     let medDoses = doses.map { MedicationDose(time: $0.time, strength: $0.strength, quantity: $0.quantity, notes: $0.notes) }
-                    let med = Medication(name: name,
+                    let med: Medication
+                    if let existing = medication {
+                        existing.name = name
+                        existing.dosage = dosage
+                        existing.doses = medDoses
+                        existing.startDate = startDate
+                        existing.endDate = endDate
+                        existing.supplyCount = supplyCount
+                        existing.refillThreshold = refillThreshold
+                        med = existing
+                    } else {
+                        med = Medication(name: name,
                                          dosage: dosage,
                                          doses: medDoses,
                                          startDate: startDate,
                                          endDate: endDate,
                                          supplyCount: supplyCount,
                                          refillThreshold: refillThreshold)
-                    modelContext.insert(med)
+                        modelContext.insert(med)
+                    }
                     try modelContext.save()
                     med.scheduleReminders()
-                    dismiss()
+                    showSuccess = true
                 } catch {
                     errorMessage = error.localizedDescription
                     showError = true
                 }
             }
         }
-        .navigationTitle("Add Medicine")
+        .navigationTitle(medication == nil ? "Add Medicine" : "Edit Medicine")
         .alert("Error", isPresented: $showError) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(errorMessage)
+        }
+        .alert("Success", isPresented: $showSuccess) {
+            Button("OK") { dismiss() }
+        } message: {
+            Text("Medicine saved")
         }
     }
 }
