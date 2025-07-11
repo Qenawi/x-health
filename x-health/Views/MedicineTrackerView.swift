@@ -15,12 +15,15 @@ struct MedicineTrackerView: View {
                         .font(.headline)
                     Text(med.dosage)
                         .font(.subheadline)
-                    HStack {
-                        Text("Reminder: \(med.reminderTime, style: .time)")
-                        Spacer()
-                        Text("\(med.startDate, formatter: dateFormatter) - \(med.endDate, formatter: dateFormatter)")
-                            .font(.caption)
+                    if let firstDose = med.doses.first {
+                        HStack {
+                            Text("Next: \(firstDose.time, style: .time)")
+                            Spacer()
+                            Text("Supply: \(med.supplyCount)")
+                        }
                     }
+                    Text("\(med.startDate, formatter: dateFormatter) - \(med.endDate, formatter: dateFormatter)")
+                        .font(.caption)
                 }
             }
             .onDelete(perform: delete)
@@ -41,7 +44,7 @@ struct MedicineTrackerView: View {
     func delete(at offsets: IndexSet) {
         for index in offsets {
             let med = medications[index]
-            med.cancelReminder()
+            med.cancelReminders()
             modelContext.delete(med)
         }
         try? modelContext.save()

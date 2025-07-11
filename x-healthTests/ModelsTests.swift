@@ -16,10 +16,12 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(tag, decoded)
     }
     func testMedicationEncodingDecoding() throws {
-        let med = Medication(name: "Aspirin", dosage: "1 pill", reminderTime: Date(), startDate: Date(), endDate: Date().addingTimeInterval(3600))
+        let dose = MedicationDose(time: Date(), strength: "500mg", quantity: 1)
+        let med = Medication(name: "Aspirin", dosage: "tablet", doses: [dose], startDate: Date(), endDate: Date().addingTimeInterval(3600), supplyCount: 30, refillThreshold: 5)
         let data = try JSONEncoder().encode(med)
         let decoded = try JSONDecoder().decode(Medication.self, from: data)
         XCTAssertEqual(med.name, decoded.name)
         XCTAssertEqual(med.dosage, decoded.dosage)
+        XCTAssertEqual(decoded.doses.count, 1)
     }
 }
