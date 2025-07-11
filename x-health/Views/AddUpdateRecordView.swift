@@ -29,6 +29,8 @@ struct AddUpdateRecordView: View {
     // Multiple selection for body parts.
     let possibleBodyParts = ["Left Knee", "Right Knee", "Left Shoulder", "Right Shoulder", "Lower Back", "Neck", "Left Elbow", "Right Elbow"]
     @State private var selectedBodyParts: Set<String> = []
+
+    @State private var showSuccess = false
     
     // Grid columns.
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
@@ -217,6 +219,11 @@ struct AddUpdateRecordView: View {
                     selectedTag = first
                 }
             }
+            .alert("Success", isPresented: $showSuccess) {
+                Button("OK") {}
+            } message: {
+                Text("Record saved")
+            }
         }
     }
     
@@ -268,6 +275,7 @@ struct AddUpdateRecordView: View {
         modelContext.insert(newRecord)
         try? modelContext.save()
         print("Saved Record: \(newRecord)")
+        showSuccess = true
         // Reset fields.
         recordType = .doctorVisit
         date = Date()
