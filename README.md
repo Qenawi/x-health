@@ -8,7 +8,9 @@ x-health is an iOS application for managing and tracking health records, body pa
 - Compare records
 - Manage doctors and body parts
 - Image gallery and zoom
-- Track medicines with daily reminders
+- Advanced medication management
+  - Smart pill reminders with custom schedules
+  - Low supply alerts and refill reminders
 
 ## Getting Started
 1. Clone the repository
