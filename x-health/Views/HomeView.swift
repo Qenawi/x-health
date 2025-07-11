@@ -30,6 +30,9 @@ struct HomeView: View {
                     NavigationLink(destination: AddTagView()) {
                         HomeButton(title: "Add Tag", subtitle: "New tag and color")
                     }
+                    NavigationLink(destination: MedicineTrackerView()) {
+                        HomeButton(title: "Medicines", subtitle: "Track and remind")
+                    }
                 }
                 .padding(.horizontal, 20)
                 Spacer()

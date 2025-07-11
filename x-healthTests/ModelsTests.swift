@@ -15,4 +15,11 @@ final class ModelsTests: XCTestCase {
         let decoded = try JSONDecoder().decode(Tag.self, from: data)
         XCTAssertEqual(tag, decoded)
     }
+    func testMedicationEncodingDecoding() throws {
+        let med = Medication(name: "Aspirin", dosage: "1 pill", reminderTime: Date(), startDate: Date(), endDate: Date().addingTimeInterval(3600))
+        let data = try JSONEncoder().encode(med)
+        let decoded = try JSONDecoder().decode(Medication.self, from: data)
+        XCTAssertEqual(med.name, decoded.name)
+        XCTAssertEqual(med.dosage, decoded.dosage)
+    }
 }
