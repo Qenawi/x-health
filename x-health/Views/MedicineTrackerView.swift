@@ -40,7 +40,10 @@ struct MedicineTrackerView: View {
             }
         }
         .sheet(isPresented: $showAdd) {
-            NavigationView { AddMedicationView() }
+            NavigationView {
+                AddMedicationView()
+            }
+            .environment(\.modelContext, modelContext)
         }
         .alert("Error", isPresented: .constant(errorMessage != nil), actions: {
             Button("OK", role: .cancel) { errorMessage = nil }
