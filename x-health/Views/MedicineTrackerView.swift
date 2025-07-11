@@ -6,6 +6,7 @@ struct MedicineTrackerView: View {
     @Query(sort: \Medication.startDate, order: .forward) var medications: [Medication]
     @Environment(\.modelContext) private var modelContext
     @State private var showAdd = false
+    @State private var errorMessage: String? = nil
 
     var body: some View {
         List {
@@ -15,11 +16,13 @@ struct MedicineTrackerView: View {
                         .font(.headline)
                     Text(med.dosage)
                         .font(.subheadline)
-                    if let firstDose = med.doses.first {
+                    if let nextDose = med.doses.first(where: { $0.status != .taken }) {
                         HStack {
-                            Text("Next: \(firstDose.time, style: .time)")
+                            Text("Next: \(nextDose.time, style: .time)")
                             Spacer()
-                            Text("Supply: \(med.supplyCount)")
+                            Button(action: { markTaken(med: med, dose: nextDose) }) {
+                                Image(systemName: nextDose.status == .taken ? "checkmark.circle.fill" : "circle")
+                            }
                         }
                     }
                     Text("\(med.startDate, formatter: dateFormatter) - \(med.endDate, formatter: dateFormatter)")
@@ -39,6 +42,11 @@ struct MedicineTrackerView: View {
         .sheet(isPresented: $showAdd) {
             NavigationView { AddMedicationView() }
         }
+        .alert("Error", isPresented: .constant(errorMessage != nil), actions: {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        }, message: {
+            Text(errorMessage ?? "")
+        })
     }
 
     func delete(at offsets: IndexSet) {
@@ -47,6 +55,19 @@ struct MedicineTrackerView: View {
             med.cancelReminders()
             modelContext.delete(med)
         }
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func markTaken(med: Medication, dose: MedicationDose) {
+        med.mark(dose: dose, status: .taken)
+        do {
+            try modelContext.save()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
