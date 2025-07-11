@@ -11,12 +11,20 @@ struct MedicineTrackerView: View {
 
     private var todayDoses: [(Medication, MedicationDose)] {
         let today = Calendar.current.startOfDay(for: Date())
-        return medications.flatMap { med in
+        var results: [(Medication, MedicationDose)] = []
+        
+        for med in medications {
             let start = Calendar.current.startOfDay(for: med.startDate)
             let end = Calendar.current.startOfDay(for: med.endDate)
-            guard today >= start && today <= end else { return [] }
-            return med.doses.map { (med, $0) }
+            
+            if today >= start && today <= end {
+                for dose in med.doses {
+                    results.append((med, dose))
+                }
+            }
         }
+        
+        return results
     }
 
     var body: some View {
