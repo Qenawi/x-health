@@ -15,6 +15,6 @@ struct x_healthAppApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [MedicalRecord.self, Doctor.self, Tag.self])
+        .modelContainer(for: [MedicalRecord.self, Doctor.self, Tag.self, Medication.self])
     }
 }

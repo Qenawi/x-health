@@ -8,6 +8,7 @@ This file tracks upcoming improvements and provides an overview of the project s
 - [ ] Improve the user interface and overall user experience
 - [ ] Expand health record features (graphs, export options)
 - [ ] Prepare for App Store release
+- [ ] Add medication tracker with reminders
 
 ## File Hierarchy (partial)
 ```
