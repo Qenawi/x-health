@@ -32,4 +32,12 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(med.doses.first?.status, .taken)
         XCTAssertEqual(med.supplyCount, 4)
     }
+
+    func testResetForNewDaySetsPending() {
+        let dose = MedicationDose(time: Date(), strength: "5mg", quantity: 1, status: .taken)
+        let med = Medication(name: "Test", dosage: "pill", doses: [dose], startDate: Date(), endDate: Date())
+        med.lastReset = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        med.resetForNewDay()
+        XCTAssertEqual(med.doses.first?.status, .pending)
+    }
 }

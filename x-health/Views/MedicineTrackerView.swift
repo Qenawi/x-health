@@ -28,46 +28,51 @@ struct MedicineTrackerView: View {
     }
 
     var body: some View {
-        List {
-            if !todayDoses.isEmpty {
-                Section(header: Text("Today Log")) {
-                    ForEach(todayDoses, id: \.1.id) { pair in
-                        let med = pair.0
-                        let dose = pair.1
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(med.name).font(.headline)
-                                Text(dose.strength).font(.caption)
-                            }
-                            Spacer()
-                            Text(dose.time, style: .time)
-                            Button(action: { markTaken(med: med, dose: dose) }) {
-                                Image(systemName: dose.status == .taken ? "checkmark.circle.fill" : "circle")
-                            }
-                        }
-                    }
-                }
-            }
-
-            Section(header: Text("Medicines")) {
-                ForEach(medications) { med in
-                    VStack(alignment: .leading) {
-                        Text(med.name)
-                            .font(.headline)
-                        Text(med.dosage)
-                            .font(.subheadline)
-                        if let nextDose = med.doses.first(where: { $0.status != .taken }) {
+        VStack {
+            Text(Date(), formatter: dateFormatter)
+                .font(.headline)
+                .padding(.top, 8)
+            List {
+                if !todayDoses.isEmpty {
+                    Section(header: Text("Today Log")) {
+                        ForEach(todayDoses, id: \.1.id) { pair in
+                            let med = pair.0
+                            let dose = pair.1
                             HStack {
-                                Text("Next: \(nextDose.time, style: .time)")
+                                VStack(alignment: .leading) {
+                                    Text(med.name).font(.headline)
+                                    Text(dose.strength).font(.caption)
+                                }
                                 Spacer()
+                                Text(dose.time, style: .time)
+                                Button(action: { markTaken(med: med, dose: dose) }) {
+                                    Image(systemName: dose.status == .taken ? "checkmark.circle.fill" : "circle")
+                                }
                             }
                         }
-                        Text("\(med.startDate, formatter: dateFormatter) - \(med.endDate, formatter: dateFormatter)")
-                            .font(.caption)
                     }
-                    .onTapGesture { selectedMedication = med }
                 }
-                .onDelete(perform: delete)
+
+                Section(header: Text("Medicines")) {
+                    ForEach(medications) { med in
+                        VStack(alignment: .leading) {
+                            Text(med.name)
+                                .font(.headline)
+                            Text(med.dosage)
+                                .font(.subheadline)
+                            if let nextDose = med.doses.first(where: { $0.status != .taken }) {
+                                HStack {
+                                    Text("Next: \(nextDose.time, style: .time)")
+                                    Spacer()
+                                }
+                            }
+                            Text("\(med.startDate, formatter: dateFormatter) - \(med.endDate, formatter: dateFormatter)")
+                                .font(.caption)
+                        }
+                        .onTapGesture { selectedMedication = med }
+                    }
+                    .onDelete(perform: delete)
+                }
             }
         }
         .navigationTitle("Medicines")
@@ -95,6 +100,9 @@ struct MedicineTrackerView: View {
         }, message: {
             Text(errorMessage ?? "")
         })
+        .onAppear {
+            resetDaily()
+        }
     }
 
     func delete(at offsets: IndexSet) {
@@ -112,6 +120,17 @@ struct MedicineTrackerView: View {
 
     private func markTaken(med: Medication, dose: MedicationDose) {
         med.mark(dose: dose, status: .taken)
+        do {
+            try modelContext.save()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func resetDaily() {
+        for med in medications {
+            med.resetForNewDay()
+        }
         do {
             try modelContext.save()
         } catch {
