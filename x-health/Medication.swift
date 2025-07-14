@@ -12,6 +12,8 @@ final class Medication: Identifiable {
     var endDate: Date
     var supplyCount: Int
     var refillThreshold: Int
+    /// The last date the daily checklist was reset. Stored at midnight UTC.
+    var lastReset: Date
 
     init(name: String,
          dosage: String,
@@ -19,7 +21,8 @@ final class Medication: Identifiable {
          startDate: Date,
          endDate: Date,
          supplyCount: Int = 0,
-         refillThreshold: Int = 0) {
+         refillThreshold: Int = 0,
+         lastReset: Date = Calendar.current.startOfDay(for: Date())) {
         self.id = UUID()
         self.name = name
         self.dosage = dosage
@@ -28,6 +31,7 @@ final class Medication: Identifiable {
         self.endDate = endDate
         self.supplyCount = supplyCount
         self.refillThreshold = refillThreshold
+        self.lastReset = lastReset
     }
 }
 
@@ -77,5 +81,15 @@ extension Medication {
         content.sound = .default
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "refill-\(id.uuidString)", content: content, trigger: trigger), withCompletionHandler: nil)
+    }
+
+    /// Reset all dose statuses at the start of a new day.
+    func resetForNewDay() {
+        let today = Calendar.current.startOfDay(for: Date())
+        guard !Calendar.current.isDate(lastReset, inSameDayAs: today) else { return }
+        for index in doses.indices {
+            doses[index].status = .pending
+        }
+        lastReset = today
     }
 }
